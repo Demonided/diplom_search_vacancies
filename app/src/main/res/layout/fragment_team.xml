@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <Toolbar
+        style="@style/medium22_font"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/fragment_favorite_title_height"
+        android:title="@string/bottomTeam"
+        android:titleTextColor="@color/black" />
+
+    <TextView
+        style="@style/bold32_font"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin"
+        android:layout_marginTop="24dp"
+        android:text="@string/developers"
+        android:textColor="@color/black" />
+
+    <TextView
+        style="@style/medium16_font"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin"
+        android:layout_marginTop="24dp"
+        android:text="@string/developer_maksim"
+        android:textColor="@color/black" />
+
+    <TextView
+        style="@style/medium16_font"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin"
+        android:layout_marginTop="@dimen/margin"
+        android:text="@string/developer_sergey"
+        android:textColor="@color/black" />
+
+    <TextView
+        style="@style/medium16_font"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin"
+        android:layout_marginTop="@dimen/margin"
+        android:text="@string/developer_anton"
+        android:textColor="@color/black" />
+
+    <TextView
+        style="@style/medium16_font"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin"
+        android:layout_marginTop="@dimen/margin"
+        android:text="@string/developer_dmitry"
+        android:textColor="@color/black" />
+
+    <TextView
+        style="@style/medium16_font"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin"
+        android:layout_marginTop="@dimen/margin"
+        android:text="@string/developer_igor"
+        android:textColor="@color/black" />
+
+</LinearLayout>

@@ -1,3 +1,20 @@
 <resources>
+  
     <string name="app_name">Practicum-Android-Diploma</string>
+
+    <string name="fragment_favorite_title">Избранное</string>
+    <string name="fragment_favorite_empty_list">Список пуст</string>
+    <string name="fragment_favorite_get_list_error">Не удалось получить\nсписок вакансий</string>
+
+    <string name="bottomSearch">Главная</string>
+    <string name="bottomFavorite">Избранное</string>
+    <string name="bottomTeam">Команда</string>
+
+    <string name="developers">Над приложением работали</string>
+    <string name="developer_maksim">Шостак Максим</string>
+    <string name="developer_sergey">Богачев Сергей</string>
+    <string name="developer_anton">Едленко Антон</string>
+    <string name="developer_dmitry">Жаринов Дмитрий</string>
+    <string name="developer_igor">Игорь Шипицын</string>
+
 </resources>
