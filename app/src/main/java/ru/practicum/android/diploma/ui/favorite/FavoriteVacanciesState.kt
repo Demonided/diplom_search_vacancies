@@ -1,6 +1,6 @@
 package ru.practicum.android.diploma.ui.favorite
 
-import ru.practicum.android.diploma.domain.models.VacancyDetails
+import ru.practicum.android.diploma.domain.models.vacacy.Vacancy
 
 sealed class FavoriteVacanciesState {
 
@@ -9,6 +9,6 @@ sealed class FavoriteVacanciesState {
     data object GetVacanciesError : FavoriteVacanciesState()
 
     data class VacancyList(
-        val vacancies: List<VacancyDetails>
+        val vacancies: List<Vacancy>
     ) : FavoriteVacanciesState()
 }
