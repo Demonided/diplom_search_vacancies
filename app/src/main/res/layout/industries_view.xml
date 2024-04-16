@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingVertical="6dp"
+    android:paddingStart="@dimen/margin"
+    android:paddingEnd="6dp">
+
+    <TextView
+        android:id="@+id/industry_name"
+        style="@style/regular16_font"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:text="sdfsdfsfsdf sdf sdfsdf sdfsddfsd dsfsddddddfsdf sdfsdfsdf sdfsdfsdf sdf"
+        android:textColor="@color/black" />
+
+    <FrameLayout
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center">
+
+        <RadioButton
+            android:id="@+id/industry_radio_button"
+            style="@style/radio_button"
+            android:layout_width="30dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:buttonTint="@color/blue"
+            android:checked="false"
+            android:clickable="false" />
+    </FrameLayout>
+
+</androidx.appcompat.widget.LinearLayoutCompat>

@@ -2,17 +2,137 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/industries_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/fragment_default_title_height"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:navigationIcon="@drawable/back_icon"
+        app:titleTextAppearance="@style/medium22_font" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/medium22_font"
+            android:text="@string/fragment_industries_toolbar_title"
+            android:textColor="@color/black" />
+
+    </com.google.android.material.appbar.MaterialToolbar>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/ti_search"
+        style="@style/searchBar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginHorizontal="@dimen/margin"
+        android:layout_marginVertical="@dimen/xs_margin"
+        app:endIconMode="custom"
+        app:endIconDrawable="@drawable/ic_search_24px"
+        app:endIconTint="@color/black.universal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/industries_toolbar">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/search"
+            style="@style/regular16_font"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/fragment_textview_height"
+            android:autofillHints="none"
+            android:hint="@string/fragment_industries_search_hint"
+            android:imeOptions="actionDone"
+            android:inputType="text"
+            android:maxLength="128"
+            android:singleLine="true"
+            android:textColor="@color/black.universal"
+            android:textColorHint="@color/search_bar_hint" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/margin"
+        android:clipToPadding="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ti_search"
+        app:layout_constraintVertical_bias="0.0"
+        tools:itemCount="5"
+        tools:listitem="@layout/industries_view" />
+
+    <LinearLayout
+        android:id="@+id/errorContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="@dimen/margin"
+        android:layout_marginTop="@dimen/xs_margin"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone"
+        tools:visibility="visible"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ti_search">
+
+        <ImageView
+            android:id="@+id/errorImageView"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/fragment_favorite_images_height"
+            android:src="@drawable/state_image_nothing_found" />
+
+        <TextView
+            android:id="@+id/errorTextView"
+            style="@style/medium22_font"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/fragment_favorite_side_margins"
+            android:gravity="center"
+            android:textColor="@color/black"
+            tools:text="Такого региона нет"/>
+    </LinearLayout>
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/industries_filter_apply"
+        style="@style/medium16_font"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/fragment_industries_select_button_height"
+        android:layout_marginStart="@dimen/margin"
+        android:layout_marginEnd="@dimen/margin"
+        android:layout_marginBottom="@dimen/xl_margin"
+        android:background="@drawable/filter_button_rounded"
         android:gravity="center"
-        android:text="Это фрагмент ВАКАНСИИ"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        android:text="@string/filter_select"
+        android:textColor="@color/white.universal"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
-        />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/margin"
+        android:indeterminate="false"
+        android:indeterminateTint="@color/blue"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ti_search"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

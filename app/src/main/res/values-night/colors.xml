@@ -4,4 +4,12 @@
     <color name="black">#FDFDFD</color>
     <color name="white">#1A1B22</color>
 
+    <!--search bar должен быть серым в ночной теме, в дизайне цветов это не отражено...-->
+    <color name="search_bar_background">#AEAFB4</color>
+    <!--та же история с hint , в дизайне цветов это не отражено...-->
+    <color name="search_bar_hint">#FDFDFD</color>
+
+    <color name="all_filters_sum_hint">#FDFDFD</color>
+
+    <color name="text_black_white">#FDFDFD</color>
 </resources>

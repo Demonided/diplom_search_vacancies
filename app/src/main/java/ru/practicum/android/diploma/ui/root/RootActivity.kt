@@ -5,7 +5,6 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
-import ru.practicum.android.diploma.BuildConfig
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.ActivityRootBinding
 
@@ -25,7 +24,8 @@ class RootActivity : AppCompatActivity() {
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
-                R.id.fragmentDetails -> {
+                R.id.fragmentDetails, R.id.filterAllFragment, R.id.workplaceFragment,
+                R.id.countFragment, R.id.regionFragment, R.id.industriesFragment -> {
                     binding.bottomNavigationView.visibility = View.GONE
                     binding.horizontalLine.visibility = View.GONE
                 }
@@ -37,10 +37,5 @@ class RootActivity : AppCompatActivity() {
 
             }
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        _binding = null
     }
 }

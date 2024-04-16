@@ -10,6 +10,7 @@ android {
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     buildFeatures {
+        buildConfig = true
         viewBinding = true
     }
 
@@ -37,10 +38,6 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
-    }
-
-    buildFeatures {
-        buildConfig = true
     }
 }
 
@@ -70,8 +67,14 @@ dependencies {
     implementation(libs.navigation.ui.ktx)
     kapt(libs.glide.annotationProcessor)
 
+    // Paging3
+    implementation(libs.paging.runtime)
+
+    // Peko
+    implementation(libs.peko)
+
     // Json
-    implementation(libs.json)
+    implementation(libs.kotlinx.serialization.json)
 
     // UI layer libraries
     implementation(libs.ui.material)

@@ -1,18 +1,439 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:background="@color/white">
 
-    <TextView
+    <LinearLayout
+        android:id="@+id/navigationBar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/fragment_default_title_height"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/backImageView"
+            android:layout_width="@dimen/medium_icon_size"
+            android:layout_height="@dimen/medium_icon_size"
+            android:layout_gravity="center"
+            android:layout_marginStart="@dimen/xxs_margin"
+            android:src="@drawable/back_icon"
+            app:tint="@color/black" />
+
+        <TextView
+            style="@style/medium22_font"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="@dimen/xxs_margin"
+            android:layout_marginEnd="@dimen/xxs_margin"
+            android:layout_weight="1"
+            android:text="@string/vacancy"
+            android:textColor="@color/black" />
+
+        <ImageView
+            android:id="@+id/shareImageView"
+            android:layout_width="@dimen/medium_icon_size"
+            android:layout_height="@dimen/medium_icon_size"
+            android:layout_gravity="center"
+            android:layout_marginEnd="@dimen/xs_margin"
+            android:foreground="?attr/selectableItemBackground"
+            android:src="@drawable/share"
+            app:tint="@color/black" />
+
+        <FrameLayout
+            android:id="@+id/favorite_icon"
+            android:layout_width="@dimen/medium_icon_size"
+            android:layout_height="@dimen/medium_icon_size"
+            android:layout_gravity="center"
+            android:layout_marginEnd="@dimen/xs_margin">
+
+            <ImageView
+                android:id="@+id/icon_is_not_favorite"
+                android:layout_width="@dimen/medium_icon_size"
+                android:layout_height="@dimen/medium_icon_size"
+                android:foreground="?attr/selectableItemBackground"
+                android:src="@drawable/favourite_empty"
+                android:visibility="visible"
+                app:tint="@color/black" />
+
+            <ImageView
+                android:id="@+id/icon_is_favorite"
+                android:layout_width="@dimen/medium_icon_size"
+                android:layout_height="@dimen/medium_icon_size"
+                android:src="@drawable/favorite_filled"
+                android:visibility="invisible" />
+
+        </FrameLayout>
+
+
+    </LinearLayout>
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/margin"
+        android:fillViewport="true"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/navigationBar"
+        app:layout_constraintVertical_bias="0.0">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/main_content_left_guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_begin="@dimen/margin" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/main_content_right_guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_end="@dimen/margin" />
+
+            <LinearLayout
+                android:id="@+id/titleLinearLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintLeft_toLeftOf="@id/main_content_left_guideline"
+                app:layout_constraintRight_toRightOf="@id/main_content_right_guideline"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/vacancyTitleTextView"
+                    style="@style/bold32_font"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/xs_margin"
+                    android:textColor="@color/black"
+                    tools:text="Android-разработчик" />
+
+                <TextView
+                    android:id="@+id/salaryTextView"
+                    style="@style/medium22_font"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/xxs_margin"
+                    android:layout_marginBottom="@dimen/xs_margin"
+                    android:textColor="@color/black"
+                    tools:text="от 100 000 ₽" />
+
+            </LinearLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/companyInfoCardView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin"
+                android:background="@drawable/rounded_corner_background_12"
+                android:backgroundTint="@color/light_grey"
+                app:layout_constraintLeft_toLeftOf="@id/main_content_left_guideline"
+                app:layout_constraintRight_toRightOf="@id/main_content_right_guideline"
+                app:layout_constraintTop_toBottomOf="@+id/titleLinearLayout">
+
+                <ImageView
+                    android:id="@+id/companyImageView"
+                    android:layout_width="@dimen/medium_icon_size"
+                    android:layout_height="@dimen/medium_icon_size"
+                    android:layout_marginTop="@dimen/margin"
+                    android:layout_marginBottom="@dimen/margin"
+                    android:layout_marginStart="@dimen/margin"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/xs_margin"
+                    android:layout_marginEnd="@dimen/margin"
+                    android:orientation="vertical"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/companyImageView"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <TextView
+                        android:id="@+id/companyTitleTextView"
+                        style="@style/medium22_font"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/black.universal"
+                        android:maxLines="2"
+                        android:ellipsize="end"
+                        tools:text="Еда" />
+
+                    <TextView
+                        android:id="@+id/companyCityTextView"
+                        style="@style/regular16_font"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/black.universal"
+                        android:maxLines="2"
+                        android:ellipsize="end"
+                        tools:text="Москва" />
+
+                </LinearLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <LinearLayout
+                android:id="@+id/experience_linear_layout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/l_margin"
+                android:orientation="vertical"
+                app:layout_constraintLeft_toLeftOf="@id/main_content_left_guideline"
+                app:layout_constraintRight_toRightOf="@id/main_content_right_guideline"
+                app:layout_constraintTop_toBottomOf="@id/companyInfoCardView">
+
+                <TextView
+                    style="@style/medium16_font"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/needed_experience"
+                    android:textColor="@color/black" />
+
+                <TextView
+                    android:id="@+id/experience_text_view"
+                    style="@style/regular16_font"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/xxs_margin"
+                    android:textColor="@color/black"
+                    tools:text="От 1 года до 3 лет" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/employmentTypeTextView"
+                style="@style/regular16_font"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/xs_margin"
+                android:textColor="@color/black"
+                app:layout_constraintLeft_toLeftOf="@id/main_content_left_guideline"
+                app:layout_constraintRight_toRightOf="@id/main_content_right_guideline"
+                app:layout_constraintTop_toBottomOf="@id/experience_linear_layout"
+                tools:text="Полная занятость, Удаленная работа" />
+
+            <LinearLayout
+                android:id="@+id/vacancyDescriptionContainerLinearLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/xl_margin"
+                android:orientation="vertical"
+                app:layout_constraintLeft_toLeftOf="@id/main_content_left_guideline"
+                app:layout_constraintRight_toRightOf="@id/main_content_right_guideline"
+                app:layout_constraintTop_toBottomOf="@id/employmentTypeTextView">
+
+                <TextView
+                    style="@style/medium22_font"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/vacancy_description"
+                    android:textColor="@color/black" />
+
+                <TextView
+                    android:id="@+id/vacancyDescriptionTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin"
+                    android:textColor="@color/black"
+                    tools:text="Обязанности:\n- Разрабатывать новую функциональность" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/keySkillsContainerLinearLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/l_margin"
+                android:orientation="vertical"
+                android:visibility="gone"
+                tools:visibility="visible"
+                app:layout_constraintLeft_toLeftOf="@id/main_content_left_guideline"
+                app:layout_constraintRight_toRightOf="@id/main_content_right_guideline"
+                app:layout_constraintTop_toBottomOf="@id/vacancyDescriptionContainerLinearLayout">
+
+                <TextView
+                    style="@style/medium22_font"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/key_skills"
+                    android:textColor="@color/black" />
+
+                <TextView
+                    android:id="@+id/keySkillsTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin"
+                    android:textColor="@color/black"
+                    tools:text="- Знание классических алгоритмов и структуры данных" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/contactsTitleTextView"
+                style="@style/medium22_font"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/l_margin"
+                android:text="@string/contacts"
+                android:textColor="@color/black"
+                app:layout_constraintLeft_toLeftOf="@id/main_content_left_guideline"
+                app:layout_constraintRight_toRightOf="@id/main_content_right_guideline"
+                app:layout_constraintTop_toBottomOf="@id/keySkillsContainerLinearLayout" />
+
+            <LinearLayout
+                android:id="@+id/contactNameContainerLinearLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin"
+                android:orientation="vertical"
+                app:layout_constraintLeft_toLeftOf="@id/main_content_left_guideline"
+                app:layout_constraintRight_toRightOf="@id/main_content_right_guideline"
+                app:layout_constraintTop_toBottomOf="@id/contactsTitleTextView">
+
+                <TextView
+                    style="@style/medium16_font"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/contact_name"
+                    android:textColor="@color/black" />
+
+                <TextView
+                    android:id="@+id/contactNameTextView"
+                    style="@style/regular16_font"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/xxs_margin"
+                    android:textColor="@color/black"
+                    tools:text="Ирина" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/emailContainerLinearLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin"
+                android:orientation="vertical"
+                app:layout_constraintLeft_toLeftOf="@id/main_content_left_guideline"
+                app:layout_constraintRight_toRightOf="@id/main_content_right_guideline"
+                app:layout_constraintTop_toBottomOf="@id/contactNameContainerLinearLayout">
+
+                <TextView
+                    style="@style/medium16_font"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/email"
+                    android:textColor="@color/black" />
+
+                <TextView
+                    android:id="@+id/emailTextView"
+                    style="@style/regular16_font"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/xxs_margin"
+                    android:textColor="@color/blue"
+                    tools:text="name@yandex.ru" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/contactPhoneContainerLinearLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin"
+                android:orientation="vertical"
+                app:layout_constraintLeft_toLeftOf="@id/main_content_left_guideline"
+                app:layout_constraintRight_toRightOf="@id/main_content_right_guideline"
+                app:layout_constraintTop_toBottomOf="@id/emailContainerLinearLayout">
+
+                <TextView
+                    style="@style/medium16_font"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/phone"
+                    android:textColor="@color/black" />
+
+                <TextView
+                    android:id="@+id/contactPhoneTextView"
+                    style="@style/regular16_font"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/xxs_margin"
+                    android:textColor="@color/blue"
+                    tools:text="+7 (904) 329-27-71" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="24dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/contactPhoneContainerLinearLayout" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/errorContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="@dimen/margin"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone"
+        tools:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/navigationBar"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <ImageView
+            android:id="@+id/errorImageView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/state_image_server_error_vacancy" />
+
+        <TextView
+            android:id="@+id/errorTextView"
+            style="@style/medium22_font"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:text="@string/server_error"/>
+
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="Это фрагмент ДЕТАЛЕЙ ВАКАНСИИ"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        android:indeterminateTint="@color/blue"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/navigationBar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
