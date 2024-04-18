@@ -32,12 +32,9 @@ class FavoriteViewModel(
                 } else {
                     _state.postValue(FavoriteState.EmptyList)
                 }
-            } catch (e: Exception) {
+            } catch (e: RuntimeException) {
                 Log.e("Exception", e.message.toString())
-                when(e){
-                    is RuntimeException -> _state.postValue(FavoriteState.Error)
-                    else -> _state.postValue(FavoriteState.Error)
-                }
+                _state.postValue(FavoriteState.Error)
             }
         }
     }
