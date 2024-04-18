@@ -20,14 +20,19 @@ class FavoriteViewModel(
 
     fun reloadFavoriteVacancies() {
         viewModelScope.launch {
-            val data = ArrayList<VacancyDetails>()
-            favoriteInteractor.getAllFavoriteVacancies().collect {
-                data.add(it)
-            }
-            if (data.size > 0) {
-                _state.postValue(FavoriteState.VacancyList(data))
-            } else {
-                _state.postValue(FavoriteState.EmptyList)
+            try {
+                val data = ArrayList<VacancyDetails>()
+                favoriteInteractor.getAllFavoriteVacancies().collect {
+                    data.add(it)
+                }
+                // throw Exception("_state.postValue(FavoriteState.Error)")
+                if (data.size > 0) {
+                    _state.postValue(FavoriteState.VacancyList(data))
+                } else {
+                    _state.postValue(FavoriteState.EmptyList)
+                }
+            } catch (e: Exception) {
+                _state.postValue(FavoriteState.Error)
             }
         }
     }
