@@ -34,4 +34,3 @@ data class VacancyEntity(
     val link: String,
     val keySkills: String
 )
-
