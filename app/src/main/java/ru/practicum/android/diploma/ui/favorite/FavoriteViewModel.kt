@@ -1,5 +1,6 @@
 package ru.practicum.android.diploma.ui.favorite
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -20,7 +21,6 @@ class FavoriteViewModel(
 
     fun reloadFavoriteVacancies() {
         viewModelScope.launch {
-            @Suppress("detekt:TooGenericExceptionCaught", "detekt:SwallowedException")
             try {
                 val data = ArrayList<VacancyDetails>()
                 favoriteInteractor.getAllFavoriteVacancies().collect {
@@ -33,7 +33,11 @@ class FavoriteViewModel(
                     _state.postValue(FavoriteState.EmptyList)
                 }
             } catch (e: Exception) {
-                _state.postValue(FavoriteState.Error)
+                Log.e("Exception", e.message.toString())
+                when(e){
+                    is RuntimeException -> _state.postValue(FavoriteState.Error)
+                    else -> _state.postValue(FavoriteState.Error)
+                }
             }
         }
     }
