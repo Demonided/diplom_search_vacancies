@@ -28,7 +28,6 @@ class FavoriteViewModel(
                 favoriteInteractor.getAllFavoriteVacancies().collect {
                     data.add(it)
                 }
-                // throw Exception("_state.postValue(FavoriteState.Error)")
                 if (data.size > 0) {
                     _state.postValue(FavoriteState.VacancyList(data))
                 } else {
