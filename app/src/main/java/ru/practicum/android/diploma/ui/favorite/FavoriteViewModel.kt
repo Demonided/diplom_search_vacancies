@@ -20,6 +20,7 @@ class FavoriteViewModel(
 
     fun reloadFavoriteVacancies() {
         viewModelScope.launch {
+            @Suppress("detekt:TooGenericExceptionCaught", "detekt:SwallowedException")
             try {
                 val data = ArrayList<VacancyDetails>()
                 favoriteInteractor.getAllFavoriteVacancies().collect {
@@ -32,10 +33,7 @@ class FavoriteViewModel(
                     _state.postValue(FavoriteState.EmptyList)
                 }
             } catch (e: Exception) {
-                when (e) {
-                    is RuntimeException -> _state.postValue(FavoriteState.Error)
-                    else -> _state.postValue(FavoriteState.Error)
-                }
+                _state.postValue(FavoriteState.Error)
             }
         }
     }
