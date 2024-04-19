@@ -1,5 +1,7 @@
 package ru.practicum.android.diploma.ui.favorite
 
+import android.database.sqlite.SQLiteException
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -20,14 +22,19 @@ class FavoriteViewModel(
 
     fun reloadFavoriteVacancies() {
         viewModelScope.launch {
-            val data = ArrayList<VacancyDetails>()
-            favoriteInteractor.getAllFavoriteVacancies().collect {
-                data.add(it)
-            }
-            if (data.size > 0) {
-                _state.postValue(FavoriteState.VacancyList(data))
-            } else {
-                _state.postValue(FavoriteState.EmptyList)
+            try {
+                val data = ArrayList<VacancyDetails>()
+                favoriteInteractor.getAllFavoriteVacancies().collect {
+                    data.add(it)
+                }
+                if (data.size > 0) {
+                    _state.postValue(FavoriteState.VacancyList(data))
+                } else {
+                    _state.postValue(FavoriteState.EmptyList)
+                }
+            } catch (e: SQLiteException) {
+                Log.e("Exception", e.message.toString())
+                _state.postValue(FavoriteState.Error)
             }
         }
     }
