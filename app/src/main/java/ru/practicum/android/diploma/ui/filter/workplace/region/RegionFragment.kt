@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -13,8 +15,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
-import ru.practicum.android.diploma.data.converter.AreaConverter.mapToCountry
 import ru.practicum.android.diploma.databinding.FragmentRegionBinding
+import ru.practicum.android.diploma.domain.debugLog
 import ru.practicum.android.diploma.domain.filter.datashared.RegionShared
 import ru.practicum.android.diploma.ui.filter.workplace.region.adapter.RegionAdapter
 
@@ -34,7 +36,6 @@ class RegionFragment : Fragment() {
         return binding.root
     }
 
-    @Suppress("detekt:LongMethod")
     override fun onViewCreated(
         view: View,
         savedInstanceState: Bundle?
@@ -50,31 +51,35 @@ class RegionFragment : Fragment() {
                     regionName = item.name
                 )
             )
+
+            viewModel.getCountry(item.parentId)
+
+            debugLog(TAG) { "adapter.itemClickListener = ${item.name}, ${item.parentId}" }
+
             findNavController().popBackStack()
         }
 
         binding.recyclerView.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         binding.recyclerView.adapter = adapter
+        bindTextWatcher()
+        bindClearSearch()
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.observeState().observe(viewLifecycleOwner) { state ->
+                viewModel.observeStateRegion().observe(viewLifecycleOwner) { state ->
                     when (state) {
                         is RegionState.Content -> {
                             showContent()
 
                             adapter.regionList.clear()
-                            adapter.regionList.addAll(
-                                state.regionId.areas.map { it.mapToCountry() }
-                                    .sortedBy { it.name }
-                            )
+                            adapter.regionList.addAll(state.regions)
 
                             adapter.notifyDataSetChanged()
                         }
 
                         is RegionState.Empty -> showEmpty(getString(state.message))
-                        is RegionState.Error -> showError(getString(state.errorMessage))
+                        is RegionState.Error -> showError(state)
                         is RegionState.Loading -> showLoading()
                     }
                 }
@@ -103,12 +108,19 @@ class RegionFragment : Fragment() {
         binding.progressBar.visibility = View.VISIBLE
     }
 
-    private fun showError(errorMessage: String) {
+    private fun showError(error: RegionState.Error) {
         binding.recyclerView.visibility = View.GONE
         binding.errorContainer.visibility = View.VISIBLE
-        binding.errorImageView.setImageResource(R.drawable.state_image_error_get_list)
-        binding.errorTextView.text = errorMessage
+        binding.errorTextView.text = getString(error.errorMessage)
         binding.progressBar.visibility = View.GONE
+
+        with(binding.errorImageView) {
+            when (error) {
+                RegionState.Error.SERVER_ERROR -> setImageResource(R.drawable.state_image_server_error_search)
+                RegionState.Error.NO_CONNECTION -> setImageResource(R.drawable.state_image_no_internet)
+                RegionState.Error.NOTHING_FOUND -> setImageResource(R.drawable.state_image_error_get_list)
+            }
+        }
     }
 
     private fun showEmpty(message: String) {
@@ -117,5 +129,32 @@ class RegionFragment : Fragment() {
         binding.errorImageView.setImageResource(R.drawable.state_image_nothing_found)
         binding.errorTextView.text = message
         binding.progressBar.visibility = View.GONE
+    }
+
+    private fun bindTextWatcher() = with(binding) {
+        search.addTextChangedListener(
+            onTextChanged = { s, _, _, _ ->
+                val text = s.toString()
+                viewModel.search(text)
+
+                if (text.isEmpty()) {
+                    ivSearch.isVisible = true
+                    ivCross.isVisible = false
+                } else {
+                    ivSearch.isVisible = false
+                    ivCross.isVisible = true
+                }
+            }
+        )
+    }
+
+    private fun bindClearSearch() = with(binding) {
+        ivCross.setOnClickListener {
+            search.text = null
+        }
+    }
+
+    companion object {
+        const val TAG = "RegionFragment"
     }
 }

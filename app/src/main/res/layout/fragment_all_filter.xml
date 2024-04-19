@@ -154,6 +154,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@android:color/transparent"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:hint="@string/filter_enter_amount"
             android:imeOptions="actionDone"
             android:inputType="number"
@@ -165,7 +167,11 @@
             android:textAppearance="@style/regular16_font"
             android:textColor="@color/black.universal"
             android:textColorHint="@color/all_filters_sum_hint"
-            android:textCursorDrawable="@color/blue" />
+            android:textCursorDrawable="@drawable/blue_cursor"
+            android:textSelectHandle="@drawable/blue_cursor_center_handle"
+            android:textSelectHandleLeft="@drawable/blue_cursor_left_handle"
+            android:textSelectHandleRight="@drawable/blue_cursor_right_handle"
+            android:textColorHighlight="@color/blue"/>
 
         <ImageView
             android:id="@+id/filter_salary_clear"
@@ -214,10 +220,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:visibility="visible">
+        >
 
         <TextView
             android:id="@+id/filter_function_apply"
@@ -231,7 +236,6 @@
             android:gravity="center"
             android:text="@string/filter_apply"
             android:textColor="@color/white.universal"
-            android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@+id/filter_function_remove"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -250,7 +254,6 @@
             android:gravity="center"
             android:text="@string/filter_remove"
             android:textColor="@color/red"
-            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

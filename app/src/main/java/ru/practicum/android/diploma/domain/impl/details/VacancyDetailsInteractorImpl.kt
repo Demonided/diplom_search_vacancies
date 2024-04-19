@@ -1,4 +1,4 @@
-package ru.practicum.android.diploma.domain.impl
+package ru.practicum.android.diploma.domain.impl.details
 
 import kotlinx.coroutines.flow.Flow
 import ru.practicum.android.diploma.domain.api.details.VacancyDetailsInteractor
@@ -12,6 +12,10 @@ class VacancyDetailsInteractorImpl(
 ) : VacancyDetailsInteractor {
     override suspend fun getVacancyDetails(id: String): Flow<VacancyDetails> {
         return vacancyDetailsRepository.getVacancyDetails(id)
+    }
+
+    override suspend fun getVacancyFromDatabase(id: String): VacancyDetails? {
+        return favoriteVacanciesRepository.getVacancyById(id)
     }
 
     override suspend fun makeVacancyFavorite(vacancy: VacancyDetails) {

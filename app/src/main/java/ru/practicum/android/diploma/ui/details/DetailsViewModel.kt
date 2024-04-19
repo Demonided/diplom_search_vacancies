@@ -2,7 +2,6 @@ package ru.practicum.android.diploma.ui.details
 
 import android.Manifest
 import android.content.Context
-import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -20,7 +19,7 @@ import ru.practicum.android.diploma.util.CurrencySymbol
 import ru.practicum.android.diploma.util.SalaryFormatter
 
 class DetailsViewModel(
-    private val interactor: VacancyDetailsInteractor,
+    private val detailsInteractor: VacancyDetailsInteractor,
     private val externalNavigator: ExternalNavigator
 ) : ViewModel() {
 
@@ -41,14 +40,23 @@ class DetailsViewModel(
         viewModelScope.launch {
             @Suppress("detekt:TooGenericExceptionCaught", "detekt:SwallowedException")
             try {
-                interactor.getVacancyDetails(vacancyId).collect {
+                detailsInteractor.getVacancyDetails(vacancyId).collect {
                     vacancyDetails = it
                     updateModel(it, fragment.requireContext())
                 }
             } catch (e: VacancyDetailsException) {
-                stateLiveData.postValue(DetailsViewState.Error)
+                if (!e.message.isNullOrBlank() && e.message == "Network error") {
+                    val dbVacancy = detailsInteractor.getVacancyFromDatabase(vacancyId)
+                    if (dbVacancy != null) {
+                        vacancyDetails = dbVacancy
+                        updateModel(dbVacancy, fragment.requireContext())
+                    }
+
+                } else {
+                    stateLiveData.postValue(DetailsViewState.Error)
+                }
             } catch (e: Exception) {
-                //
+                stateLiveData.postValue(DetailsViewState.Error)
             }
         }
     }
@@ -58,7 +66,7 @@ class DetailsViewModel(
         externalNavigator.writeEmail(email)
     }
 
-    fun call(context: Context) {
+    fun call() {
         viewModelScope.launch {
             PermissionRequester.instance().request(
                 Manifest.permission.CALL_PHONE
@@ -76,11 +84,7 @@ class DetailsViewModel(
                     }
 
                     is PermissionResult.Denied.NeedsRationale -> {
-                        Toast.makeText(
-                            context,
-                            context.getString(R.string.call_permission_text),
-                            Toast.LENGTH_LONG
-                        ).show()
+                        stateLiveData.postValue(DetailsViewState.ToastPermissionDenied)
                     }
 
                     is PermissionResult.Cancelled -> {}
@@ -134,20 +138,16 @@ class DetailsViewModel(
         return text.ifEmpty { null }
     }
 
-    /*private fun formatPrice(price: String): String {
-        return price.reversed().chunked(sizeOfMoneyPart).reversed().joinToString(" ") { it.reversed() }
-    }*/
-
     fun favoriteIconClicked() {
         vacancyDetails?.let {
             viewModelScope.launch {
-                if (interactor.isVacancyFavorite(vacancyDetails?.id ?: "")) {
-                    interactor.makeVacancyNormal(it.id)
+                if (detailsInteractor.isVacancyFavorite(vacancyDetails?.id ?: "")) {
+                    detailsInteractor.makeVacancyNormal(it.id)
                     stateLiveData.postValue(
                         DetailsViewState.IsVacancyFavorite(false)
                     )
                 } else {
-                    interactor.makeVacancyFavorite(it)
+                    detailsInteractor.makeVacancyFavorite(it)
                     stateLiveData.postValue(
                         DetailsViewState.IsVacancyFavorite(true)
                     )
@@ -161,7 +161,7 @@ class DetailsViewModel(
         viewModelScope.launch {
             stateLiveData.postValue(
                 DetailsViewState.IsVacancyFavorite(
-                    interactor.isVacancyFavorite(vacancyDetails?.id ?: "")
+                    detailsInteractor.isVacancyFavorite(vacancyDetails?.id ?: "")
                 )
             )
         }
