@@ -1,6 +1,5 @@
 package ru.practicum.android.diploma.ui.filter
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.text.Editable
@@ -66,7 +65,6 @@ class FilterAllFragment : Fragment() {
         }
     }
 
-    @SuppressLint("SetTextI18n")
     private fun observeCountryState() = with(binding) {
         viewModel.countryState.observe(viewLifecycleOwner) { country ->
             if (country != null) {
@@ -77,7 +75,8 @@ class FilterAllFragment : Fragment() {
 
                 viewModel.regionState.observe(viewLifecycleOwner) { region ->
                     if (region != null) {
-                        filterTextWorkplace.text = country.countryName + ", " + region.regionName
+                        val text = "${country.countryName}, ${region.regionName}"
+                        filterTextWorkplace.text = text
                     }
                 }
             } else {

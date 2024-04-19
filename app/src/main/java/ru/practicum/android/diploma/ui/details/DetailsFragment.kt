@@ -80,56 +80,64 @@ class DetailsFragment : Fragment() {
         }
     }
 
-    private fun setTextFields(data: DetailsViewState.Content) {
-        contactName = data.contactName ?: requireArguments().getString(vacancyNameKey)
-        contactEmail = data.contactEmail ?: requireArguments().getString(vacancyEmailKey)
-        contactPhone = data.contactPhone ?: requireArguments().getString(vacancyPhoneKey)
-        contactComment = data.contactComment ?: requireArguments().getString(vacancyCommentKey)
+    private fun setTextFields(data: DetailsViewState.Content) = with(binding) {
+        getContactInfo(data)
 
-        binding.vacancyTitleTextView.text = data.name
+        vacancyTitleTextView.text = data.name
         setSalary(data.salaryFrom, data.salaryTo, data.currency)
-        setTextOrHide(data.companyName, binding.companyTitleTextView)
+        setTextOrHide(data.companyName, companyTitleTextView)
         if (data.fullAddress.isNullOrEmpty()) {
-            binding.companyCityTextView.text = data.areaName
+            companyCityTextView.text = data.areaName
         } else {
-            binding.companyCityTextView.text = data.fullAddress
+            companyCityTextView.text = data.fullAddress
         }
-        setTextOrHide(data.experience, binding.experienceTextView, binding.experienceLinearLayout)
-        setTextOrHide(data.employment, binding.employmentTypeTextView)
+        setTextOrHide(data.experience, experienceTextView, experienceLinearLayout)
+        setTextOrHide(data.employment, employmentTypeTextView)
         setTextOrHide(
             data.keySkills,
-            binding.keySkillsTextView,
-            binding.keySkillsContainerLinearLayout
+            keySkillsTextView,
+            keySkillsContainerLinearLayout
         )
-        setTextOrHide(
-            contactName,
-            binding.contactNameTextView,
-            binding.contactNameContainerLinearLayout
-        )
-        setTextOrHide(
-            contactEmail,
-            binding.emailTextView,
-            binding.emailContainerLinearLayout
-        )
-        setTextOrHide(
-            contactPhone,
-            binding.contactPhoneTextView,
-            binding.contactPhoneContainerLinearLayout
-        )
-        setTextOrHide(
-            contactComment,
-            binding.contactCommentTextView,
-            binding.contactCommentContainerLinearLayout
-        )
-        binding.contactsTitleTextView.isVisible = !(
+        setContactsInfo()
+        contactsTitleTextView.isVisible = !(
             contactName.isNullOrEmpty()
                 && contactEmail.isNullOrEmpty()
                 && contactPhone.isNullOrEmpty()
                 && contactComment.isNullOrEmpty()
             )
-        binding.vacancyDescriptionTextView.text = HtmlCompat.fromHtml(
+        vacancyDescriptionTextView.text = HtmlCompat.fromHtml(
             data.description.replace(Regex("<li>\\s<p>|<li>"), "<li> "),
             HtmlCompat.FROM_HTML_SEPARATOR_LINE_BREAK_LIST_ITEM
+        )
+    }
+
+    private fun getContactInfo(data: DetailsViewState.Content) {
+        contactName = data.contactName ?: requireArguments().getString(vacancyNameKey)
+        contactEmail = data.contactEmail ?: requireArguments().getString(vacancyEmailKey)
+        contactPhone = data.contactPhone ?: requireArguments().getString(vacancyPhoneKey)
+        contactComment = data.contactComment ?: requireArguments().getString(vacancyCommentKey)
+    }
+
+    private fun setContactsInfo() = with(binding) {
+        setTextOrHide(
+            contactName,
+            contactNameTextView,
+            contactNameContainerLinearLayout
+        )
+        setTextOrHide(
+            contactEmail,
+            emailTextView,
+            emailContainerLinearLayout
+        )
+        setTextOrHide(
+            contactPhone,
+            contactPhoneTextView,
+            contactPhoneContainerLinearLayout
+        )
+        setTextOrHide(
+            contactComment,
+            contactCommentTextView,
+            contactCommentContainerLinearLayout
         )
     }
 

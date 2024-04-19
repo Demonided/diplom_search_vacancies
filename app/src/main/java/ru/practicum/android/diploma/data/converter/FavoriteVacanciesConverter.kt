@@ -9,7 +9,6 @@ import ru.practicum.android.diploma.domain.models.vacacy.Salary
 
 object FavoriteVacanciesConverter {
 
-    @Suppress("detekt:LongMethod")
     fun VacancyDetails.convert(): VacancyEntity = VacancyEntity(
         id = this.id,
         name = this.name,
@@ -41,68 +40,100 @@ object FavoriteVacanciesConverter {
         keySkills = this.keySkills
     )
 
-    @Suppress("detekt:LongMethod")
     fun VacancyEntity.convert(): VacancyDetails = VacancyDetails(
         id = this.id,
         name = this.name,
 
-        salary = if (!this.salaryCurrency.isNullOrBlank()) {
-            Salary(
-                currency = this.salaryCurrency,
-                from = this.salaryFrom,
-                gross = this.salaryGross,
-                to = this.salaryTo
-            )
-        } else {
-            null
-        },
+        salary = convertSalary(salaryCurrency, salaryFrom, salaryGross, salaryTo),
 
-        employer = if (!this.employerId.isNullOrBlank()) {
+        employer = if (!employerId.isNullOrBlank()) {
             Employer(
-                id = this.employerId,
-                logoUrls = if (!this.employerLogoUrlOriginal.isNullOrBlank()) {
-                    LogoUrls(
-                        art90 = this.employerLogoUrl90,
-                        art240 = this.employerLogoUrl240,
-                        original = this.employerLogoUrlOriginal
-                    )
-                } else {
-                    null
-                },
-                name = this.name,
-                trusted = this.employerIsTrusted ?: false,
-                vacanciesUrl = this.employerVacanciesUrl
+                id = employerId,
+                logoUrls = convertLogosUrl(employerLogoUrlOriginal, employerLogoUrl90, employerLogoUrl240),
+                name = employerName,
+                trusted = employerIsTrusted ?: false,
+                vacanciesUrl = employerVacanciesUrl
             )
         } else {
             null
         },
 
         city = this.city,
-        fullAddress = this.employment,
-        areaName = this.name,
+        fullAddress = null,
+        areaName = this.city ?: "",
         experience = this.experience,
         employment = this.employment,
         description = this.description,
 
-        contacts = if (
-            this.contactEmail.isNullOrBlank() &&
-            this.contactName.isNullOrBlank() &&
-            this.contactPhone.isNullOrBlank() &&
-            this.contactComment.isNullOrBlank()
-
-        ) {
-            null
-        } else {
-            Contacts(
-                email = this.contactEmail,
-                name = this.contactName,
-                phone = this.contactPhone,
-                comment = this.contactComment
-            )
-        },
+        contacts = convertContacts(contactEmail, contactName, contactPhone, contactComment),
 
         link = this.link,
         keySkills = this.keySkills
     )
 
+    private fun convertSalary(
+        salaryCurrency: String?,
+        salaryFrom: Int?,
+        salaryGross: Boolean?,
+        salaryTo: Int?
+    ): Salary? {
+        return if (!salaryCurrency.isNullOrBlank()) {
+            Salary(
+                currency = salaryCurrency,
+                from = salaryFrom,
+                gross = salaryGross,
+                to = salaryTo
+            )
+        } else {
+            null
+        }
+    }
+
+    private fun isEmailAndNameNull(
+        email: String?,
+        name: String?,
+    ) = email.isNullOrBlank() && name.isNullOrBlank()
+
+    private fun isPhoneAndCommentNull(
+        phone: String?,
+        comment: String?
+    ) = phone.isNullOrBlank() && comment.isNullOrBlank()
+
+    private fun convertContacts(
+        contactEmail: String?,
+        contactName: String?,
+        contactPhone: String?,
+        contactComment: String?
+    ): Contacts? {
+        return if (
+            isEmailAndNameNull(contactEmail, contactName) &&
+            isPhoneAndCommentNull(contactPhone, contactComment)
+
+        ) {
+            null
+        } else {
+            Contacts(
+                email = contactEmail,
+                name = contactName,
+                phone = contactPhone,
+                comment = contactComment
+            )
+        }
+    }
+
+    private fun convertLogosUrl(
+        employerLogoUrlOriginal: String?,
+        employerLogoUrl90: String?,
+        employerLogoUrl240: String?
+    ): LogoUrls? {
+        return if (!employerLogoUrlOriginal.isNullOrBlank()) {
+            LogoUrls(
+                art90 = employerLogoUrl90,
+                art240 = employerLogoUrl240,
+                original = employerLogoUrlOriginal
+            )
+        } else {
+            null
+        }
+    }
 }
