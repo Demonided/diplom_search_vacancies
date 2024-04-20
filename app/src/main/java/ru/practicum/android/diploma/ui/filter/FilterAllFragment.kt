@@ -111,6 +111,7 @@ class FilterAllFragment : Fragment() {
             if (salarySum?.salary?.isNotEmpty() == true) {
                 filterExpectedSalary.setTextColor(ContextCompat.getColor(requireContext(), R.color.black_universal))
                 filterTextSalary.setText(salarySum.salary)
+                filterTextSalary.setSelection(salarySum.salary.length)
                 filterSalaryClear.visibility = View.VISIBLE
             } else {
                 filterExpectedSalary.setTextColor(
