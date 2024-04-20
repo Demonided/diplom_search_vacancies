@@ -1,6 +1,7 @@
 package ru.practicum.android.diploma.ui.details
 
 import android.Manifest
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -14,6 +15,7 @@ import ru.practicum.android.diploma.domain.models.VacancyDetails
 import ru.practicum.android.diploma.domain.models.vacacy.Contacts
 import ru.practicum.android.diploma.domain.sharing.ExternalNavigator
 import ru.practicum.android.diploma.util.SalaryFormatter
+import java.io.IOException
 
 class DetailsViewModel(
     private val detailsInteractor: VacancyDetailsInteractor,
@@ -29,37 +31,45 @@ class DetailsViewModel(
         stateLiveData.postValue(DetailsViewState.Loading)
 
         viewModelScope.launch {
-            @Suppress("detekt:TooGenericExceptionCaught", "detekt:SwallowedException")
             try {
-                val dbVacancy = detailsInteractor.getVacancyFromDatabase(vacancyId)
-                var vacancyContacts: Contacts? = null
-                if (dbVacancy != null) {
-                    vacancyContacts = Contacts(
-                        dbVacancy.contacts?.email,
-                        dbVacancy.contacts?.name,
-                        dbVacancy.contacts?.phone,
-                        dbVacancy.contacts?.comment
-                    )
-                }
-                detailsInteractor.getVacancyDetails(vacancyId).collect {
-                    vacancyDetails = it
-                    updateModel(it.copy(contacts = vacancyContacts))
-                }
+                handleVacancyDetails(vacancyId)
             } catch (e: VacancyDetailsException) {
-                if (!e.message.isNullOrBlank() && e.message == "Network error") {
-                    val dbVacancy = detailsInteractor.getVacancyFromDatabase(vacancyId)
-                    if (dbVacancy != null) {
-                        vacancyDetails = dbVacancy
-                        updateModel(dbVacancy)
-                    } else {
-                        stateLiveData.postValue(DetailsViewState.Error)
-                    }
-                } else {
-                    stateLiveData.postValue(DetailsViewState.Error)
-                }
-            } catch (e: Exception) {
+                handleVacancyErrors(e, vacancyId)
+            } catch (e: IOException) {
+                Log.e("IOException", e.message.toString())
                 stateLiveData.postValue(DetailsViewState.Error)
             }
+        }
+    }
+
+    private suspend fun handleVacancyDetails(vacancyId: String) {
+        val dbVacancy = detailsInteractor.getVacancyFromDatabase(vacancyId)
+        var vacancyContacts: Contacts? = null
+        if (dbVacancy != null) {
+            vacancyContacts = Contacts(
+                dbVacancy.contacts?.email,
+                dbVacancy.contacts?.name,
+                dbVacancy.contacts?.phone,
+                dbVacancy.contacts?.comment
+            )
+        }
+        detailsInteractor.getVacancyDetails(vacancyId).collect {
+            vacancyDetails = it
+            updateModel(it.copy(contacts = vacancyContacts))
+        }
+    }
+
+    private suspend fun handleVacancyErrors(e: VacancyDetailsException, vacancyId: String) {
+        if (!e.message.isNullOrBlank() && e.message == "Network error") {
+            val dbVacancy = detailsInteractor.getVacancyFromDatabase(vacancyId)
+            if (dbVacancy != null) {
+                vacancyDetails = dbVacancy
+                updateModel(dbVacancy)
+            } else {
+                stateLiveData.postValue(DetailsViewState.Error)
+            }
+        } else {
+            stateLiveData.postValue(DetailsViewState.Error)
         }
     }
 
@@ -73,7 +83,7 @@ class DetailsViewModel(
         viewModelScope.launch {
             PermissionRequester.instance().request(
                 Manifest.permission.CALL_PHONE
-            ).collect() {
+            ).collect {
                 when (it) {
                     is PermissionResult.Granted -> {
                         if (phone != null) {
@@ -165,9 +175,5 @@ class DetailsViewModel(
                 )
             )
         }
-    }
-
-    companion object {
-        const val SIZE_OF_MONEY_PART = 3
     }
 }
