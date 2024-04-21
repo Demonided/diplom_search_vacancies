@@ -178,7 +178,7 @@ class FilterAllFragment : Fragment() {
 
         filterTextSalary.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-
+                /*NOTHING*/
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -195,13 +195,13 @@ class FilterAllFragment : Fragment() {
             }
 
             override fun afterTextChanged(s: Editable?) {
-
+                /*NOTHING*/
             }
         })
 
         filterTextSalary.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {
-                if(filterTextSalary.text.isNotEmpty()) {
+                if (filterTextSalary.text.isNotEmpty()) {
                     binding.filterExpectedSalary.setTextColor(
                         ContextCompat.getColor(requireContext(), R.color.black_universal)
                     )
