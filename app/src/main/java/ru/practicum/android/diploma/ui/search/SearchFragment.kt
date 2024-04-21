@@ -252,6 +252,7 @@ class SearchFragment : Fragment() {
         ivCross.setOnClickListener {
             search.setText("")
             vacancyAdapter.clearList()
+            viewModel.clearPagingInfo()
 
             viewModel.setDefaultState()
             inputMethodManager?.hideSoftInputFromWindow(

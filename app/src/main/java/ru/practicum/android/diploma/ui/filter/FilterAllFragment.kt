@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +12,7 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -27,6 +29,12 @@ class FilterAllFragment : Fragment() {
 
     private val viewModel by viewModel<FilterAllViewModel>()
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        viewModel.initFilterAllViewFilterState()
+        Log.e("onAttach", "onAttach")
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentAllFilterBinding.inflate(layoutInflater)
         return binding.root
@@ -35,6 +43,7 @@ class FilterAllFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        observeApplyButtonVisible()
         observeFilterAllState()
         observeCountryState()
         observeIndustriesState()
@@ -45,19 +54,39 @@ class FilterAllFragment : Fragment() {
         bindNavigationListeners()
     }
 
+    private fun observeApplyButtonVisible() = with(binding) {
+        viewModel.countryState.observe(viewLifecycleOwner) { country ->
+            viewModel.regionState.observe(viewLifecycleOwner) { region ->
+                viewModel.industriesState.observe(viewLifecycleOwner) { industries ->
+                    viewModel.salarySum.observe(viewLifecycleOwner) { salaryText ->
+                        viewModel.salaryBoolean.observe(viewLifecycleOwner) { salaryBoolean ->
+                            filterFunctionApply.isVisible = viewModel.isEqualsCurrentFilters(
+                                country,
+                                region,
+                                industries,
+                                salaryText,
+                                salaryBoolean,
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private fun observeFilterAllState() = with(binding) {
         viewModel.countryState.observe(viewLifecycleOwner) { country ->
             viewModel.industriesState.observe(viewLifecycleOwner) { industries ->
                 viewModel.salarySum.observe(viewLifecycleOwner) { salaryText ->
                     viewModel.salaryBoolean.observe(viewLifecycleOwner) { salaryBoolean ->
                         if (country != null || industries != null) {
-                            filterFunctionButton.visibility = View.VISIBLE
+                            filterFunctionRemove.visibility = View.VISIBLE
                         } else if (salaryText?.salary?.isNotEmpty() == true
                             || salaryBoolean != null
                         ) {
-                            filterFunctionButton.visibility = View.VISIBLE
+                            filterFunctionRemove.visibility = View.VISIBLE
                         } else {
-                            filterFunctionButton.visibility = View.GONE
+                            filterFunctionRemove.visibility = View.GONE
                         }
                     }
                 }
@@ -195,15 +224,16 @@ class FilterAllFragment : Fragment() {
                     binding.filterExpectedSalary.setTextColor(ContextCompat.getColor(requireContext(), R.color.blue))
                     binding.filterSalaryClear.visibility = View.VISIBLE
                     binding.filterSalaryClear.isClickable = true
-                    binding.filterFunctionButton.visibility = View.VISIBLE
+                    binding.filterFunctionRemove.visibility = View.VISIBLE
                     viewModel.setSalarySumInfo(SalaryTextShared(salary = s.toString()))
                 } else {
                     binding.filterExpectedSalary.setTextColor(
                         ContextCompat.getColor(requireContext(), R.color.all_filters_sum_hint)
                     )
+                    viewModel.setSalarySumInfo(null)
                     binding.filterSalaryClear.visibility = View.GONE
                     binding.filterTextSalary.clearFocus()
-                    binding.filterFunctionButton.visibility = View.GONE
+                    binding.filterFunctionRemove.visibility = View.GONE
                 }
             }
 
@@ -217,15 +247,6 @@ class FilterAllFragment : Fragment() {
 
     private fun bindNavigationListeners() = with(binding) {
         filterFunctionApply.setOnClickListener {
-            viewModel.setSalarySumInfo(
-                if (filterTextSalary.text.toString().isNotEmpty()) {
-                    SalaryTextShared(
-                        salary = filterTextSalary.text.toString()
-                    )
-                } else {
-                    null
-                }
-            )
             viewModel.updateSearchResults()
             findNavController().navigateUp()
         }
