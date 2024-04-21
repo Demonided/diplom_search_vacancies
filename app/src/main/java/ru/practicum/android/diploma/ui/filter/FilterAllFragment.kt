@@ -133,7 +133,6 @@ class FilterAllFragment : Fragment() {
     private fun bindOnClickListeners() = with(binding) {
         filterSalaryClear.setOnClickListener {
             filterTextSalary.setText("")
-            hideKeyboard(binding.filterTextSalary)
             viewModel.setSalarySumInfo(null)
         }
 
@@ -171,12 +170,6 @@ class FilterAllFragment : Fragment() {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 filterTextSalary.clearFocus()
                 hideKeyboard(textView)
-                filterExpectedSalary.setTextColor(ContextCompat.getColor(requireContext(), R.color.black_universal))
-                viewModel.setSalarySumInfo(
-                    SalaryTextShared(
-                        salary = filterTextSalary.text.toString()
-                    )
-                )
                 true
             } else {
                 false
@@ -185,34 +178,41 @@ class FilterAllFragment : Fragment() {
 
         filterTextSalary.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                /*NOTHING*/
+
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 binding.filterSalaryClear.visibility = View.VISIBLE
 
                 if (s?.isNotEmpty() == true) {
-                    binding.filterExpectedSalary.setTextColor(ContextCompat.getColor(requireContext(), R.color.blue))
                     binding.filterSalaryClear.visibility = View.VISIBLE
                     binding.filterSalaryClear.isClickable = true
                     binding.filterFunctionButton.visibility = View.VISIBLE
-                    viewModel.setSalarySumInfo(SalaryTextShared(salary = s.toString()))
                 } else {
-                    binding.filterExpectedSalary.setTextColor(
-                        ContextCompat.getColor(requireContext(), R.color.all_filters_sum_hint)
-                    )
                     binding.filterSalaryClear.visibility = View.GONE
-                    binding.filterTextSalary.clearFocus()
                     binding.filterFunctionButton.visibility = View.GONE
                 }
             }
 
             override fun afterTextChanged(s: Editable?) {
-                binding.filterExpectedSalary.setTextColor(
-                    ContextCompat.getColor(requireContext(), R.color.black_universal)
-                )
+
             }
         })
+
+        filterTextSalary.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                if(filterTextSalary.text.isNotEmpty()) {
+                    binding.filterExpectedSalary.setTextColor(
+                        ContextCompat.getColor(requireContext(), R.color.black_universal)
+                    )
+                }
+                viewModel.setSalarySumInfo(SalaryTextShared(salary = filterTextSalary.text.toString()))
+            } else {
+                binding.filterExpectedSalary.setTextColor(
+                    ContextCompat.getColor(requireContext(), R.color.blue)
+                )
+            }
+        }
     }
 
     private fun bindNavigationListeners() = with(binding) {
