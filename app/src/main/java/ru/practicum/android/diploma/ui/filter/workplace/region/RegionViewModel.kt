@@ -39,8 +39,8 @@ class RegionViewModel(
             _countryState.value = country
             // Передаем countryId в loadCurrentRegions()
             if (country != null && !country.countryId.isNullOrEmpty()) {
-                country.let { country ->
-                    country.countryId?.let { countryId ->
+                country.let {
+                    it.countryId?.let { countryId ->
                         loadCurrentRegions(countryId)
                         countryInteractor.searchCountry()
                     }
@@ -67,8 +67,12 @@ class RegionViewModel(
                         }
                     }
                 }
-            regions = regionAll.sortedBy { it.name }
-            renderState(RegionState.Content(regionAll.sortedBy { it.name }))
+            if (regionAll.size > 0) {
+                regions = regionAll.sortedBy { it.name }
+                renderState(RegionState.Content(regionAll.sortedBy { it.name }))
+            } else {
+                renderState(RegionState.Error.NOTHING_FOUND)
+            }
             debugLog(TAG) { "loadCountry: в конце корутины regionAll = ${regionAll.map { it.name }}" }
         }
         debugLog(TAG) { "loadCountry: после корутины regionAll = ${regionAll.map { it.name }}" }
@@ -103,12 +107,15 @@ class RegionViewModel(
     private fun processResult(regionList: Country?, errorMessage: Int?) {
         when {
             errorMessage != null -> {
-                if (errorMessage == -1) {
-                    renderState(RegionState.Error.NO_CONNECTION)
-                } else if (errorMessage == ResponseCodeConstants.SERVER_ERROR) {
-                    renderState(RegionState.Error.SERVER_ERROR)
-                } else {
-                    renderState(RegionState.Error.NOTHING_FOUND)
+                when (errorMessage) {
+                    -1 ->
+                        renderState(RegionState.Error.NO_CONNECTION)
+
+                    ResponseCodeConstants.SERVER_ERROR ->
+                        renderState(RegionState.Error.SERVER_ERROR)
+
+                    else ->
+                        renderState(RegionState.Error.NOTHING_FOUND)
                 }
             }
 
