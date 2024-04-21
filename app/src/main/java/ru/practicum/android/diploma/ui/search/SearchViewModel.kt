@@ -45,7 +45,8 @@ class SearchViewModel(
             filterUpdateFlowRepository.getFlow().collect {
                 val query = lastQuery
                 clearPagingInfo()
-                Log.e("flow", "flow collected $it")
+                Log.d("past", "past flow $filters")
+                Log.d("flow", "flow collected $it")
                 search(query, it)
             }
         }
@@ -94,7 +95,7 @@ class SearchViewModel(
         }
         viewModelScope.launch {
             vacancySearchInteractor.getVacancies(text, currentPage, filters).collect {
-                Log.e("searched", it.toString())
+                Log.d("searched", filters.toString())
                 if (it.first != null) {
                     handleResponse(it.first as VacancyResponse)
                 } else if (it.second != null) {

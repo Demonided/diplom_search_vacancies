@@ -37,6 +37,6 @@ val filterModule = module {
     }
 
     single<FilterUpdateFlowRepository> {
-        FilterUpdateFlowRepositoryImpl(get())
+        FilterUpdateFlowRepositoryImpl(get(), get(), get(), get(), get())
     }
 }

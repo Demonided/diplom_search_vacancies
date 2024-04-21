@@ -1,12 +1,9 @@
 package ru.practicum.android.diploma.domain.filter.impl
 
 import android.util.Log
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
 import ru.practicum.android.diploma.domain.filter.FilterRepositoryCountryFlow
 import ru.practicum.android.diploma.domain.filter.FilterRepositoryIndustriesFlow
 import ru.practicum.android.diploma.domain.filter.FilterRepositoryRegionFlow
@@ -32,22 +29,19 @@ class FiltersRepositoryImpl(
     private val filtersFlow: MutableStateFlow<Filters> = MutableStateFlow(Filters())
 
     override fun getFiltersFlow(): Flow<Filters> {
-        job = CoroutineScope(Dispatchers.IO).launch {
-            filterRepositoryCountryFlow.getCountryFlow().collect { county ->
-                filterRepositoryRegionFlow.getRegionFlow().collect { region ->
-                    filterRepositoryIndustriesFlow.getIndustriesFlow().collect { industries ->
-                        filterRepositorySalaryTextFlow.getSalaryTextFlow().collect { salaryText ->
-                            filterRepositorySalaryBooleanFlow.getSalaryBooleanFlow().collect { salaryBoolean ->
-                                filtersFlow.value =
-                                    makeFilters(county, region, industries, salaryText, salaryBoolean)
-                                Log.d("filters source", filtersFlow.value.toString())
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        filtersFlow.value = makeFilters(
+            filterRepositoryCountryFlow.getCountryFlow().value,
+            filterRepositoryRegionFlow.getRegionFlow().value,
+            filterRepositoryIndustriesFlow.getIndustriesFlow().value,
+            filterRepositorySalaryTextFlow.getSalaryTextFlow().value,
+            filterRepositorySalaryBooleanFlow.getSalaryBooleanFlow().value,
+        )
+        Log.d("filters source", filtersFlow.value.toString())
         return filtersFlow
+    }
+
+    override fun getFilters(): Filters {
+        return filtersFlow.value
     }
 
     private fun makeFilters(
