@@ -125,7 +125,6 @@ class RegionFragment : Fragment() {
             when (error) {
                 RegionState.Error.SERVER_ERROR -> setImageResource(R.drawable.state_image_server_error_search)
 
-                // RegionState.Error.NO_CONNECTION -> setImageResource(R.drawable.state_image_no_internet)
                 RegionState.Error.NO_CONNECTION -> setImageResource(R.drawable.state_image_error_get_list)
 
                 RegionState.Error.NOTHING_FOUND -> setImageResource(R.drawable.state_image_error_get_list)
