@@ -7,6 +7,7 @@ import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okio.IOException
+import retrofit2.HttpException
 import ru.practicum.android.diploma.data.filter.country.CountryRequest
 import ru.practicum.android.diploma.data.filter.country.response.AreasResponse
 import ru.practicum.android.diploma.data.filter.industries.IndustriesRequest
@@ -76,8 +77,11 @@ class RetrofitNetworkClient(
                 response.apply { resultCode = ResponseCodes.SUCCESS }
 
             } catch (e: IOException) {
-                Log.e("Exception", e.message.toString())
+                Log.e("IOException", e.message.toString())
                 Response().apply { resultCode = ResponseCodes.SERVER_ERROR }
+            } catch (e: HttpException) {
+                Log.e("HttpException", e.toString())
+                Response().apply { resultCode = ResponseCodes.NO_CONNECTION }
             }
 
         }
@@ -107,8 +111,11 @@ class RetrofitNetworkClient(
                 }
                 response.apply { resultCode = ResponseCodes.SUCCESS }
             } catch (e: IOException) {
-                Log.e("Exception", e.message.toString())
+                Log.e("IOException", e.message.toString())
                 Response().apply { resultCode = ResponseCodes.SERVER_ERROR }
+            } catch (e: HttpException) {
+                Log.e("HttpException", e.toString())
+                Response().apply { resultCode = ResponseCodes.NO_CONNECTION }
             }
         }
     }

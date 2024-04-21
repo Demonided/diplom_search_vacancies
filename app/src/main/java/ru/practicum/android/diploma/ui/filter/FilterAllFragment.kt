@@ -217,7 +217,9 @@ class FilterAllFragment : Fragment() {
                     binding.filterSalaryClear.visibility = View.VISIBLE
                     binding.filterSalaryClear.isClickable = true
                     binding.filterFunctionRemove.visibility = View.VISIBLE
+                    viewModel.setSalarySumInfo(SalaryTextShared(salary = s.toString()))
                 } else {
+                    viewModel.setSalarySumInfo(null)
                     binding.filterSalaryClear.visibility = View.GONE
                     binding.filterFunctionRemove.visibility = View.GONE
                 }
