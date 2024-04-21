@@ -95,6 +95,7 @@ class SearchFragment : Fragment() {
             is SearchViewState.Content -> showContent(state.vacancies, state.found)
             is SearchViewState.Loading -> showLoading()
             is SearchViewState.NoInternet -> showNoInternetState()
+            SearchViewState.ServerError -> showServerErrorState()
             is SearchViewState.EmptyVacancies -> showEmptyVacanciesState()
             is SearchViewState.RecyclerLoading -> vacancyAdapter.addLoadingView()
             is SearchViewState.RecyclerError -> {
@@ -148,7 +149,7 @@ class SearchFragment : Fragment() {
             requireView(),
             errorMessage,
             Snackbar.LENGTH_SHORT
-        ) // .setAction(R.string.retry) { viewModel.onLastItemReached() }
+        )
 
     private fun bindVacancyAdapter() {
         binding.rvVacancy.adapter =
@@ -161,6 +162,7 @@ class SearchFragment : Fragment() {
         rvVacancy.isVisible = false
         noInternetGroup.isVisible = false
         nothingFoundGroup.isVisible = false
+        serverErrorGroup.isVisible = false
         tvSearchInfo.isVisible = false
     }
 
@@ -172,6 +174,7 @@ class SearchFragment : Fragment() {
         noInternetGroup.isVisible = false
         nothingFoundGroup.isVisible = false
         tvSearchInfo.isVisible = true
+        serverErrorGroup.isVisible = false
         tvSearchInfo.text =
             resources.getQuantityString(
                 R.plurals.plurals_vacancies,
@@ -188,6 +191,7 @@ class SearchFragment : Fragment() {
         rvVacancy.isVisible = false
         noInternetGroup.isVisible = false
         nothingFoundGroup.isVisible = false
+        serverErrorGroup.isVisible = false
         tvSearchInfo.isVisible = false
     }
 
@@ -197,6 +201,17 @@ class SearchFragment : Fragment() {
         rvVacancy.isVisible = false
         noInternetGroup.isVisible = true
         nothingFoundGroup.isVisible = false
+        serverErrorGroup.isVisible = false
+        tvSearchInfo.isVisible = false
+    }
+
+    private fun showServerErrorState() = with(binding) {
+        ivStartSearch.isVisible = false
+        progressBar.isVisible = false
+        rvVacancy.isVisible = false
+        noInternetGroup.isVisible = false
+        nothingFoundGroup.isVisible = false
+        serverErrorGroup.isVisible = true
         tvSearchInfo.isVisible = false
     }
 
@@ -207,6 +222,7 @@ class SearchFragment : Fragment() {
         noInternetGroup.isVisible = false
         nothingFoundGroup.isVisible = true
         tvSearchInfo.isVisible = true
+        serverErrorGroup.isVisible = false
         tvSearchInfo.text = getString(R.string.no_such_vacancies)
     }
 

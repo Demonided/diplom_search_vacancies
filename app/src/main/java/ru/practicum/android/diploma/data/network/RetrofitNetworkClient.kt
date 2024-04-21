@@ -81,7 +81,7 @@ class RetrofitNetworkClient(
                 Response().apply { resultCode = ResponseCodes.SERVER_ERROR }
             } catch (e: HttpException) {
                 Log.e("HttpException", e.toString())
-                Response().apply { resultCode = ResponseCodes.NO_CONNECTION }
+                Response().apply { resultCode = ResponseCodes.SERVER_ERROR }
             }
 
         }
@@ -115,7 +115,7 @@ class RetrofitNetworkClient(
                 Response().apply { resultCode = ResponseCodes.SERVER_ERROR }
             } catch (e: HttpException) {
                 Log.e("HttpException", e.toString())
-                Response().apply { resultCode = ResponseCodes.NO_CONNECTION }
+                Response().apply { resultCode = ResponseCodes.SERVER_ERROR }
             }
         }
     }

@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import ru.practicum.android.diploma.data.vacancies.response.ResponseCodes
 import ru.practicum.android.diploma.domain.api.search.VacancySearchInteractor
 import ru.practicum.android.diploma.domain.filter.FilterUpdateFlowRepository
 import ru.practicum.android.diploma.domain.filter.FiltersRepository
@@ -122,7 +123,17 @@ class SearchViewModel(
 
     private fun handleError(error: String) {
         if (vacanciesList.isEmpty()) {
-            stateLiveData.postValue(SearchViewState.NoInternet)
+            when (error) {
+                ResponseCodes.NO_CONNECTION.code.toString() -> {
+                    stateLiveData.postValue(SearchViewState.NoInternet)
+                }
+                ResponseCodes.SERVER_ERROR.code.toString() -> {
+                    stateLiveData.postValue(SearchViewState.ServerError)
+                }
+                else -> {
+                    stateLiveData.postValue(SearchViewState.ServerError)
+                }
+            }
         } else {
             stateLiveData.postValue(SearchViewState.RecyclerError(error))
         }
