@@ -47,7 +47,9 @@ class SearchViewModel(
                 clearPagingInfo()
                 Log.d("past", "past flow $filters")
                 Log.d("flow", "flow collected $it")
-                search(query, it)
+                if (query != "") {
+                    search(query, it)
+                }
             }
         }
     }
