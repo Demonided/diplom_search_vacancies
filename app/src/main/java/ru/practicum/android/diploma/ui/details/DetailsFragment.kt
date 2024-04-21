@@ -15,6 +15,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FragmentDetailsBinding
+import ru.practicum.android.diploma.util.CurrencySymbol
 
 class DetailsFragment : Fragment() {
 
@@ -229,7 +230,7 @@ class DetailsFragment : Fragment() {
         }
         if (text.isNotEmpty()) {
             if (currency != null) {
-                text += currency
+                text += CurrencySymbol.get(currency)
             }
             binding.salaryTextView.text = text
             binding.salaryTextView.isVisible = true
