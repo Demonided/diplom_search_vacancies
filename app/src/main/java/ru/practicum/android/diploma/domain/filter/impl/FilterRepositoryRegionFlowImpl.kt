@@ -2,12 +2,12 @@ package ru.practicum.android.diploma.domain.filter.impl
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import ru.practicum.android.diploma.data.filter.storage.impl.FiltersLocalStorage
 import ru.practicum.android.diploma.domain.filter.FilterRepositoryRegionFlow
 import ru.practicum.android.diploma.domain.filter.datashared.RegionShared
+import ru.practicum.android.diploma.domain.filter.storage.RegionFilterStorage
 
 class FilterRepositoryRegionFlowImpl(
-    private val sharedPreferences: FiltersLocalStorage
+    private val sharedPreferences: RegionFilterStorage
 ) : FilterRepositoryRegionFlow {
 
     private val regionFlow: MutableStateFlow<RegionShared?> = MutableStateFlow(sharedPreferences.loadRegionState())

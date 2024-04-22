@@ -1,4 +1,4 @@
-package ru.practicum.android.diploma.data.vacancies.response
+package ru.practicum.android.diploma.domain.models
 
 object ResponseCodeConstants {
     const val DEFAULT = 0
