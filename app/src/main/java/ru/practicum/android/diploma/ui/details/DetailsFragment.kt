@@ -235,7 +235,9 @@ class DetailsFragment : Fragment() {
             binding.salaryTextView.text = text
             binding.salaryTextView.isVisible = true
         } else {
-            binding.salaryTextView.isVisible = false
+            binding.salaryTextView.isVisible = true
+            text += getString(R.string.salary_not_specified)
+            binding.salaryTextView.text = text
         }
     }
 
