@@ -58,7 +58,7 @@ class SearchViewModel(
     // Флоу со значинием не пустые ли фильтры, для отображения кнопки фильтров
     val isExistFiltersFlow = flow {
         filtersRepository.getFiltersFlow().map {
-            (it != Filters()) && (it != Filters(salary = ""))
+            it != Filters() && it != Filters(salary = "")
         }.collect {
             emit(it)
         }
