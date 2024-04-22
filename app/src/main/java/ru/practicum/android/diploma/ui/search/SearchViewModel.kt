@@ -58,7 +58,7 @@ class SearchViewModel(
     // Флоу со значинием не пустые ли фильтры, для отображения кнопки фильтров
     val isExistFiltersFlow = flow {
         filtersRepository.getFiltersFlow().map {
-            it != Filters()
+            (it != Filters()) && (it != Filters(salary = ""))
         }.collect {
             emit(it)
         }
@@ -127,9 +127,11 @@ class SearchViewModel(
                 ResponseCodes.NO_CONNECTION.code.toString() -> {
                     stateLiveData.postValue(SearchViewState.NoInternet)
                 }
+
                 ResponseCodes.SERVER_ERROR.code.toString() -> {
                     stateLiveData.postValue(SearchViewState.ServerError)
                 }
+
                 else -> {
                     stateLiveData.postValue(SearchViewState.ServerError)
                 }
