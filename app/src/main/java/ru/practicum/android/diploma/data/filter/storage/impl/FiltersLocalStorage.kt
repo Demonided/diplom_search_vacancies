@@ -1,18 +1,10 @@
 package ru.practicum.android.diploma.data.filter.storage.impl
 
 import android.content.SharedPreferences
-import com.google.gson.Gson
-import ru.practicum.android.diploma.domain.filter.datashared.CountryShared
-import ru.practicum.android.diploma.domain.filter.datashared.IndustriesShared
-import ru.practicum.android.diploma.domain.filter.datashared.RegionShared
-import ru.practicum.android.diploma.domain.filter.datashared.SalaryBooleanShared
-import ru.practicum.android.diploma.domain.filter.datashared.SalaryTextShared
 import ru.practicum.android.diploma.domain.filter.storage.FiltersStorage
 import ru.practicum.android.diploma.domain.models.FiltersSettings
 
 class FiltersLocalStorage(private val sharedPreferences: SharedPreferences) : FiltersStorage {
-
-    private val gson = Gson()
 
     override fun getPrefs(): FiltersSettings {
         return FiltersSettings(
@@ -47,56 +39,6 @@ class FiltersLocalStorage(private val sharedPreferences: SharedPreferences) : Fi
         sharedPreferences.edit().remove(FILTERS_INDUSTRY_ID).apply()
         sharedPreferences.edit().remove(FILTERS_SALARY).apply()
         sharedPreferences.edit().remove(FILTERS_SALARY_ONLY).apply()
-    }
-
-    override fun saveCountryState(country: CountryShared?) {
-        val json = gson.toJson(country)
-        sharedPreferences.edit().putString(KEY_COUNTRY, json).apply()
-    }
-
-    override fun loadCountryState(): CountryShared? {
-        val json = sharedPreferences.getString(KEY_COUNTRY, null)
-        return gson.fromJson(json, CountryShared::class.java)
-    }
-
-    override fun saveRegionState(region: RegionShared?) {
-        val json = gson.toJson(region)
-        sharedPreferences.edit().putString(KEY_REGION, json).apply()
-    }
-
-    override fun loadRegionState(): RegionShared? {
-        val json = sharedPreferences.getString(KEY_REGION, null)
-        return gson.fromJson(json, RegionShared::class.java)
-    }
-
-    override fun saveIndustriesState(industries: IndustriesShared?) {
-        val json = gson.toJson(industries)
-        sharedPreferences.edit().putString(KEY_INDUSTRIES, json).apply()
-    }
-
-    override fun loadIndustriesState(): IndustriesShared? {
-        val json = sharedPreferences.getString(KEY_INDUSTRIES, null)
-        return gson.fromJson(json, IndustriesShared::class.java)
-    }
-
-    override fun saveSalaryTextState(salary: SalaryTextShared?) {
-        val json = gson.toJson(salary)
-        sharedPreferences.edit().putString(KEY_SALARY_TEXT, json).apply()
-    }
-
-    override fun loadSalaryTextState(): SalaryTextShared? {
-        val json = sharedPreferences.getString(KEY_SALARY_TEXT, null)
-        return gson.fromJson(json, SalaryTextShared::class.java)
-    }
-
-    override fun saveSalaryBooleanState(salary: SalaryBooleanShared?) {
-        val json = gson.toJson(salary)
-        sharedPreferences.edit().putString(KEY_SALARY_BOOLEAN, json).apply()
-    }
-
-    override fun loadSalaryBooleanState(): SalaryBooleanShared? {
-        val json = sharedPreferences.getString(KEY_SALARY_BOOLEAN, null)
-        return gson.fromJson(json, SalaryBooleanShared::class.java)
     }
 
     companion object {

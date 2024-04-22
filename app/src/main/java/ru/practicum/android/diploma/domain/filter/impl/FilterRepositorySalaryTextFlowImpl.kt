@@ -4,10 +4,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import ru.practicum.android.diploma.domain.filter.FilterRepositorySalaryTextFlow
 import ru.practicum.android.diploma.domain.filter.datashared.SalaryTextShared
-import ru.practicum.android.diploma.domain.filter.storage.FiltersStorage
+import ru.practicum.android.diploma.domain.filter.storage.SalaryTextFilterStorage
 
 class FilterRepositorySalaryTextFlowImpl(
-    private val sharedPreferences: FiltersStorage
+    private val sharedPreferences: SalaryTextFilterStorage
 ) : FilterRepositorySalaryTextFlow {
 
     private val salaryTextFlow: MutableStateFlow<SalaryTextShared?> =
