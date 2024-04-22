@@ -16,6 +16,7 @@ import ru.practicum.android.diploma.data.network.NetworkClient
 import ru.practicum.android.diploma.data.network.RetrofitNetworkClient
 import ru.practicum.android.diploma.data.network.SearchVacanciesApi
 import ru.practicum.android.diploma.data.sharing.ExternalNavigatorImpl
+import ru.practicum.android.diploma.domain.filter.storage.FiltersStorage
 import ru.practicum.android.diploma.domain.sharing.ExternalNavigator
 
 private const val FILTERS_PREFS = "FILTERS_PREFS"
@@ -43,7 +44,9 @@ val dataModule = module {
         provideFiltersPreferences(androidApplication(), FILTERS_PREFS)
     }
 
-    single { FiltersLocalStorage(get(named("filtersPrefs"))) }
+    single<FiltersStorage> {
+        FiltersLocalStorage(get(named("filtersPrefs")))
+    }
 
     factory<ExternalNavigator> {
         ExternalNavigatorImpl(androidContext())

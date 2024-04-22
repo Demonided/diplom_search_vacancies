@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.data.converter.AreaConverter.mapToCountry
-import ru.practicum.android.diploma.data.vacancies.response.ResponseCodeConstants
 import ru.practicum.android.diploma.domain.country.Country
 import ru.practicum.android.diploma.domain.country.CountryInteractor
 import ru.practicum.android.diploma.domain.country.CountryRepositoryFlow
@@ -16,6 +15,7 @@ import ru.practicum.android.diploma.domain.filter.FilterRepositoryCountryFlow
 import ru.practicum.android.diploma.domain.filter.FilterRepositoryRegionFlow
 import ru.practicum.android.diploma.domain.filter.datashared.CountryShared
 import ru.practicum.android.diploma.domain.filter.datashared.RegionShared
+import ru.practicum.android.diploma.domain.models.ResponseCodeConstants
 import ru.practicum.android.diploma.domain.region.RegionInteractor
 
 class RegionViewModel(

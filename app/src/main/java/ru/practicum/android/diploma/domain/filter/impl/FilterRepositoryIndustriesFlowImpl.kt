@@ -2,12 +2,12 @@ package ru.practicum.android.diploma.domain.filter.impl
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import ru.practicum.android.diploma.data.filter.storage.impl.FiltersLocalStorage
 import ru.practicum.android.diploma.domain.filter.FilterRepositoryIndustriesFlow
 import ru.practicum.android.diploma.domain.filter.datashared.IndustriesShared
+import ru.practicum.android.diploma.domain.filter.storage.FiltersStorage
 
 class FilterRepositoryIndustriesFlowImpl(
-    private val sharedPreferences: FiltersLocalStorage
+    private val sharedPreferences: FiltersStorage
 ) : FilterRepositoryIndustriesFlow {
 
     private val industriesFlow: MutableStateFlow<IndustriesShared?> =
