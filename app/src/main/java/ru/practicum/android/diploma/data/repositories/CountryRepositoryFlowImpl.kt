@@ -1,4 +1,4 @@
-package ru.practicum.android.diploma.domain.country
+package ru.practicum.android.diploma.data.repositories
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -9,6 +9,8 @@ import kotlinx.coroutines.launch
 import okio.IOException
 import ru.practicum.android.diploma.data.converter.AreaConverter.mapToCountry
 import ru.practicum.android.diploma.data.network.SearchVacanciesApi
+import ru.practicum.android.diploma.domain.country.Country
+import ru.practicum.android.diploma.domain.country.CountryRepositoryFlow
 import ru.practicum.android.diploma.domain.debugLog
 
 class CountryRepositoryFlowImpl(

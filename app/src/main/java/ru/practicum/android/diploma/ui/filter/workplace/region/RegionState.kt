@@ -17,6 +17,6 @@ sealed interface RegionState {
     enum class Error(val errorMessage: Int) : RegionState {
         SERVER_ERROR(R.string.server_error),
         NOTHING_FOUND(R.string.nothing_found),
-        NO_CONNECTION(R.string.no_internet)
+        NO_CONNECTION(R.string.nothing_found)
     }
 }

@@ -5,9 +5,9 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.util.Log
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 import okio.IOException
+import retrofit2.HttpException
 import ru.practicum.android.diploma.data.filter.country.CountryRequest
 import ru.practicum.android.diploma.data.filter.country.response.AreasResponse
 import ru.practicum.android.diploma.data.filter.industries.IndustriesRequest
@@ -39,7 +39,7 @@ class RetrofitNetworkClient(
         return executeRequestFilter(dto)
     }
 
-    private suspend fun createNoConnectionResponse(): Response {
+    private fun createNoConnectionResponse(): Response {
         return Response().apply { resultCode = ResponseCodes.NO_CONNECTION }
     }
 
@@ -77,7 +77,10 @@ class RetrofitNetworkClient(
                 response.apply { resultCode = ResponseCodes.SUCCESS }
 
             } catch (e: IOException) {
-                Log.e("Exception", e.message.toString())
+                Log.e("IOException", e.message.toString())
+                Response().apply { resultCode = ResponseCodes.SERVER_ERROR }
+            } catch (e: HttpException) {
+                Log.e("HttpException", e.toString())
                 Response().apply { resultCode = ResponseCodes.SERVER_ERROR }
             }
 
@@ -92,48 +95,48 @@ class RetrofitNetworkClient(
         return withContext(Dispatchers.IO) {
             try {
                 val response = when (dto) {
-                    is CountryRequest -> async { getAreas() }
-                    is IndustriesRequest -> async { getIndustries() }
-                    is RegionByIdRequest -> async {
+                    is CountryRequest -> {
+                        getAreas()
+                    }
+
+                    is IndustriesRequest -> {
+                        getIndustries()
+                    }
+
+                    is RegionByIdRequest -> {
                         searchVacanciesApi.getAreaId(dto.countryId)
                     }
 
                     else -> throw IllegalArgumentException("Invalid DTO type: $dto")
-                }.await()
+                }
                 response.apply { resultCode = ResponseCodes.SUCCESS }
             } catch (e: IOException) {
+                Log.e("IOException", e.message.toString())
                 Response().apply { resultCode = ResponseCodes.SERVER_ERROR }
-                throw e
+            } catch (e: HttpException) {
+                Log.e("HttpException", e.toString())
+                Response().apply { resultCode = ResponseCodes.SERVER_ERROR }
             }
         }
     }
 
     private suspend fun getIndustries(): Response {
-        return try {
-            val industries = searchVacanciesApi.getAllIndustries()
-            if (industries.isNotEmpty()) {
-                IndustriesResponse(industries).apply { resultCode = ResponseCodes.SUCCESS }
-            } else {
-                // Создание экземпляра вашего класса Response с кодом ошибки сервера
-                Response().apply { resultCode = ResponseCodes.SERVER_ERROR }
-            }
-        } catch (e: IOException) {
+        val industries = searchVacanciesApi.getAllIndustries()
+
+        return if (industries.isNotEmpty()) {
+            IndustriesResponse(industries).apply { resultCode = ResponseCodes.SUCCESS }
+        } else {
+            // Создание экземпляра вашего класса Response с кодом ошибки сервера
             Response().apply { resultCode = ResponseCodes.SERVER_ERROR }
-            throw e
         }
     }
 
     private suspend fun getAreas(): Response {
-        return try {
-            val areas = searchVacanciesApi.getAllAreas()
-            if (areas.isNotEmpty()) {
-                AreasResponse(areas).apply { resultCode = ResponseCodes.SUCCESS }
-            } else {
-                Response().apply { resultCode = ResponseCodes.SERVER_ERROR }
-            }
-        } catch (e: IOException) {
+        val areas = searchVacanciesApi.getAllAreas()
+        return if (areas.isNotEmpty()) {
+            AreasResponse(areas).apply { resultCode = ResponseCodes.SUCCESS }
+        } else {
             Response().apply { resultCode = ResponseCodes.SERVER_ERROR }
-            throw e
         }
     }
 

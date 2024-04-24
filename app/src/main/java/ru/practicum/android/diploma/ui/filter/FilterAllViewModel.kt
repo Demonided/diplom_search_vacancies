@@ -11,18 +11,21 @@ import ru.practicum.android.diploma.domain.filter.FilterRepositoryIndustriesFlow
 import ru.practicum.android.diploma.domain.filter.FilterRepositoryRegionFlow
 import ru.practicum.android.diploma.domain.filter.FilterRepositorySalaryBooleanFlow
 import ru.practicum.android.diploma.domain.filter.FilterRepositorySalaryTextFlow
+import ru.practicum.android.diploma.domain.filter.FilterUpdateFlowRepository
 import ru.practicum.android.diploma.domain.filter.datashared.CountryShared
 import ru.practicum.android.diploma.domain.filter.datashared.IndustriesShared
 import ru.practicum.android.diploma.domain.filter.datashared.RegionShared
 import ru.practicum.android.diploma.domain.filter.datashared.SalaryBooleanShared
 import ru.practicum.android.diploma.domain.filter.datashared.SalaryTextShared
+import ru.practicum.android.diploma.ui.filter.model.FilterAllViewFilterState
 
 class FilterAllViewModel(
     private val filterRepositoryCountryFlow: FilterRepositoryCountryFlow,
     private val filterRepositoryRegionFlow: FilterRepositoryRegionFlow,
     private val filterRepositoryIndustriesFlow: FilterRepositoryIndustriesFlow,
     private val filterRepositorySalaryTextFlow: FilterRepositorySalaryTextFlow,
-    private val filterRepositorySalaryBooleanFlow: FilterRepositorySalaryBooleanFlow
+    private val filterRepositorySalaryBooleanFlow: FilterRepositorySalaryBooleanFlow,
+    private val filterUpdateFlowRepository: FilterUpdateFlowRepository,
 ) : ViewModel() {
 
     private var _countryState = MutableLiveData<CountryShared?>()
@@ -40,9 +43,33 @@ class FilterAllViewModel(
     private val _salaryBoolean = MutableLiveData<SalaryBooleanShared?>()
     val salaryBoolean: LiveData<SalaryBooleanShared?> = _salaryBoolean
 
+    private var filterAllViewFilterState = FilterAllViewFilterState()
+
     init {
         initSubscribe()
     }
+
+    fun initFilterAllViewFilterState() {
+        filterAllViewFilterState = FilterAllViewFilterState(
+            filterRepositoryCountryFlow.getCountryFlow().value,
+            filterRepositoryRegionFlow.getRegionFlow().value,
+            filterRepositoryIndustriesFlow.getIndustriesFlow().value,
+            filterRepositorySalaryTextFlow.getSalaryTextFlow().value,
+            filterRepositorySalaryBooleanFlow.getSalaryBooleanFlow().value,
+        )
+    }
+
+    fun isEqualsCurrentFilters(
+        country: CountryShared?,
+        region: RegionShared?,
+        industries: IndustriesShared?,
+        salaryText: SalaryTextShared?,
+        salaryBoolean: SalaryBooleanShared?
+    ): Boolean = filterAllViewFilterState.country != country ||
+        filterAllViewFilterState.region != region ||
+        filterAllViewFilterState.industries != industries ||
+        filterAllViewFilterState.salaryText != salaryText ||
+        filterAllViewFilterState.salaryBoolean != salaryBoolean
 
     private fun initSubscribe() {
         with(viewModelScope) {
@@ -85,6 +112,12 @@ class FilterAllViewModel(
                         _salaryBoolean.postValue(salaryBoolean)
                     }
             }
+        }
+    }
+
+    fun updateSearchResults() {
+        viewModelScope.launch {
+            filterUpdateFlowRepository.emitFlow()
         }
     }
 

@@ -15,6 +15,9 @@ sealed interface SearchViewState {
     // Картинка нет интернета
     data object NoInternet : SearchViewState
 
+    // Картинка ошибка сервера
+    data object ServerError : SearchViewState
+
     // SnackBar внизу списка вакансий
     data class RecyclerError(val errorMessage: String) : SearchViewState
 

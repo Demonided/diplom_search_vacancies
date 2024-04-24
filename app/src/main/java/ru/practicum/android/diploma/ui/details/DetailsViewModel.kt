@@ -1,7 +1,7 @@
 package ru.practicum.android.diploma.ui.details
 
 import android.Manifest
-import android.content.Context
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,14 +9,13 @@ import androidx.lifecycle.viewModelScope
 import com.markodevcic.peko.PermissionRequester
 import com.markodevcic.peko.PermissionResult
 import kotlinx.coroutines.launch
-import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.data.vacancies.VacancyDetailsException
 import ru.practicum.android.diploma.domain.api.details.VacancyDetailsInteractor
 import ru.practicum.android.diploma.domain.models.VacancyDetails
-import ru.practicum.android.diploma.domain.models.vacacy.Salary
+import ru.practicum.android.diploma.domain.models.vacacy.Contacts
 import ru.practicum.android.diploma.domain.sharing.ExternalNavigator
-import ru.practicum.android.diploma.util.CurrencySymbol
 import ru.practicum.android.diploma.util.SalaryFormatter
+import java.io.IOException
 
 class DetailsViewModel(
     private val detailsInteractor: VacancyDetailsInteractor,
@@ -28,52 +27,65 @@ class DetailsViewModel(
 
     private var vacancyDetails: VacancyDetails? = null
 
-    fun onViewCreated(fragment: DetailsFragment) {
-        val vacancyId = fragment.requireArguments().getString(DetailsFragment.vacancyIdKey)
-        if (vacancyId == null) {
-            assert(false) { "Vacancy id should be passed" }
-            return
-        }
-
+    fun onViewCreated(vacancyId: String) {
         stateLiveData.postValue(DetailsViewState.Loading)
 
         viewModelScope.launch {
-            @Suppress("detekt:TooGenericExceptionCaught", "detekt:SwallowedException")
             try {
-                detailsInteractor.getVacancyDetails(vacancyId).collect {
-                    vacancyDetails = it
-                    updateModel(it, fragment.requireContext())
-                }
+                handleVacancyDetails(vacancyId)
             } catch (e: VacancyDetailsException) {
-                if (!e.message.isNullOrBlank() && e.message == "Network error") {
-                    val dbVacancy = detailsInteractor.getVacancyFromDatabase(vacancyId)
-                    if (dbVacancy != null) {
-                        vacancyDetails = dbVacancy
-                        updateModel(dbVacancy, fragment.requireContext())
-                    }
-
-                } else {
-                    stateLiveData.postValue(DetailsViewState.Error)
-                }
-            } catch (e: Exception) {
+                handleVacancyErrors(e, vacancyId)
+            } catch (e: IOException) {
+                Log.e("IOException", e.message.toString())
                 stateLiveData.postValue(DetailsViewState.Error)
             }
         }
     }
 
-    fun writeEmail() {
-        val email = vacancyDetails?.contacts?.email ?: return
-        externalNavigator.writeEmail(email)
+    private suspend fun handleVacancyDetails(vacancyId: String) {
+        val dbVacancy = detailsInteractor.getVacancyFromDatabase(vacancyId)
+        var vacancyContacts: Contacts? = null
+        if (dbVacancy != null) {
+            vacancyContacts = Contacts(
+                dbVacancy.contacts?.email,
+                dbVacancy.contacts?.name,
+                dbVacancy.contacts?.phone,
+                dbVacancy.contacts?.comment
+            )
+        }
+        detailsInteractor.getVacancyDetails(vacancyId).collect {
+            vacancyDetails = it
+            updateModel(it.copy(contacts = vacancyContacts))
+        }
     }
 
-    fun call() {
+    private suspend fun handleVacancyErrors(e: VacancyDetailsException, vacancyId: String) {
+        if (!e.message.isNullOrBlank() && e.message == "Network error") {
+            val dbVacancy = detailsInteractor.getVacancyFromDatabase(vacancyId)
+            if (dbVacancy != null) {
+                vacancyDetails = dbVacancy
+                updateModel(dbVacancy)
+            } else {
+                stateLiveData.postValue(DetailsViewState.Error)
+            }
+        } else {
+            stateLiveData.postValue(DetailsViewState.Error)
+        }
+    }
+
+    fun writeEmail(email: String?) {
+        if (email != null) {
+            externalNavigator.writeEmail(email)
+        }
+    }
+
+    fun call(phone: String?) {
         viewModelScope.launch {
             PermissionRequester.instance().request(
                 Manifest.permission.CALL_PHONE
-            ).collect() {
+            ).collect {
                 when (it) {
                     is PermissionResult.Granted -> {
-                        val phone = vacancyDetails?.contacts?.phones?.first()
                         if (phone != null) {
                             externalNavigator.call(phone)
                         }
@@ -98,10 +110,14 @@ class DetailsViewModel(
         externalNavigator.share(vacancy.link)
     }
 
-    private fun updateModel(vacancy: VacancyDetails, context: Context) {
+    private fun updateModel(vacancy: VacancyDetails) {
+        val salaryFrom = vacancy.salary?.from
+        val salaryTo = vacancy.salary?.to
         val content = DetailsViewState.Content(
             name = vacancy.name,
-            salary = formatSalary(vacancy.salary, context),
+            salaryFrom = if (salaryFrom != null) SalaryFormatter.format(salaryFrom.toString()) else null,
+            salaryTo = if (salaryTo != null) SalaryFormatter.format(salaryTo.toString()) else null,
+            currency = vacancy.salary?.currency,
             companyLogo = vacancy.employer?.logoUrls?.art90,
             companyName = vacancy.employer?.name,
             city = vacancy.city,
@@ -112,36 +128,30 @@ class DetailsViewModel(
             description = vacancy.description,
             contactName = vacancy.contacts?.name,
             contactEmail = vacancy.contacts?.email,
-            contactsPhones = vacancy.contacts?.phones,
+            contactPhone = vacancy.contacts?.phone,
+            contactComment = vacancy.contacts?.comment,
             keySkills = vacancy.keySkills
         )
         stateLiveData.postValue(content)
     }
 
-    private fun formatSalary(salary: Salary?, context: Context): String? {
-        if (salary == null) return null
-
-        var text = ""
-        val from = salary.from
-        val to = salary.to
-        val currency = CurrencySymbol.get(salary.currency)
-
-        if (from != null) {
-            text += "${context.getString(R.string.from)} ${SalaryFormatter.format(from.toString())} "
-        }
-        if (to != null) {
-            text += "${context.getString(R.string.to)} ${SalaryFormatter.format(to.toString())} "
-        }
-        if (text.isNotEmpty() && currency != null) {
-            text += currency
-        }
-        return text.ifEmpty { null }
-    }
-
-    fun favoriteIconClicked() {
-        vacancyDetails?.let {
+    fun favoriteIconClicked(
+        contactEmail: String?,
+        contactName: String?,
+        contactPhone: String?,
+        contactComment: String?
+    ) {
+        val vacancyWithContacts = vacancyDetails?.copy(
+            contacts = Contacts(
+                contactEmail,
+                contactName,
+                contactPhone,
+                contactComment
+            )
+        )
+        vacancyWithContacts?.let {
             viewModelScope.launch {
-                if (detailsInteractor.isVacancyFavorite(vacancyDetails?.id ?: "")) {
+                if (detailsInteractor.isVacancyFavorite(vacancyWithContacts.id ?: "")) {
                     detailsInteractor.makeVacancyNormal(it.id)
                     stateLiveData.postValue(
                         DetailsViewState.IsVacancyFavorite(false)
@@ -165,9 +175,5 @@ class DetailsViewModel(
                 )
             )
         }
-    }
-
-    companion object {
-        const val sizeOfMoneyPart = 3
     }
 }

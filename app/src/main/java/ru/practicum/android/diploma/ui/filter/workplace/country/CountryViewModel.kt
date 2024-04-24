@@ -1,6 +1,5 @@
 package ru.practicum.android.diploma.ui.filter.workplace.country
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -33,8 +32,10 @@ class CountryViewModel(
             countryInteractor.searchCountry()
                 .collect { pair ->
                     processResult(pair.first, pair.second)
-                    debugLog(TAG) { "Список стран: countryName = ${pair.first?.map { it.name }}, " +
-                        "countryId = ${pair.first?.map { it.id }}\n" }
+                    debugLog(TAG) {
+                        "Список стран: countryName = ${pair.first?.map { it.name }}, " +
+                            "countryId = ${pair.first?.map { it.id }}\n"
+                    }
                 }
         }
     }
@@ -44,7 +45,7 @@ class CountryViewModel(
             errorMessage != null -> {
                 renderState(
                     CountryState.Error(
-                        errorMessage = R.string.server_error
+                        errorMessage = R.string.nothing_found
                     )
                 )
             }
